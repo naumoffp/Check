@@ -1,9 +1,11 @@
+import builtins
+import sys
+
+import colorama
+
 import build
 import jar
-import colorama
-import builtins
 import ui
-import sys
 
 KEYMAP = None
 DICTIONARY = None

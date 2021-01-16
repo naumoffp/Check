@@ -4,8 +4,9 @@ Pickling functions largely derived from:
 https://stackoverflow.com/questions/11218477/how-can-i-use-pickle-to-save-a-dict
 
 """
-import pickle
 import os
+import pickle
+
 
 def pickle_entity(filename, entity):
     """ Pickles an entity and saves it to a .pkl file """
