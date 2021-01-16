@@ -1,4 +1,7 @@
+from operator import itemgetter
+
 import numpy as np
+
 import jar
 
 
@@ -26,9 +29,12 @@ class KeyMap(object):
             self.keyboard.append([])
 
             for column_index, key in enumerate(row):
-                # normalize the current key to uppercase and append it to the current row
+                # normalize the current key to uppercase
+                key = key.upper()
+
+                # append key to the current row
                 # the current row of characters in the keyboard is defined by row_index
-                self.keyboard[row_index].append(key.upper())
+                self.keyboard[row_index].append(key)
 
                 # add location entry for the key
                 self.locations[key] = (row_index, column_index)
@@ -55,6 +61,26 @@ class KeyMap(object):
 
         return euclidean_distance
 
+    def get_nearby_keys(self, origin_key, quantity):
+        scores = dict()
+        # normalize origin key
+        origin_key = origin_key.upper()
+
+        # calculate distance score for every nearby key
+        for row in self.keyboard:
+            for nearby_key in row:
+                # ommit the key itself
+                if nearby_key != origin_key:
+                    # find the proximity of the start key to the current key
+                    proximity = self.get_distance(origin_key, nearby_key)
+                    # update scores dictionary with the proximity to the current key
+                    scores[nearby_key] = proximity
+
+        # extract the n lowest proximities and return the key/value pairs
+        # n is defined by the quantity parameter
+        # derived from https://www.geeksforgeeks.org/python-smallest-k-values-in-dictionary/
+        return dict(sorted(scores.items(), key = itemgetter(1))[:quantity])
+
 
 class SpellingDictionary(object):
     """ US Dictionary contained in words.txt is from https://github.com/dwyl/english-words/blob/master/words.txt """
@@ -76,6 +102,13 @@ class SpellingDictionary(object):
                 # normalize word to uppercase with no whitespace
                 word = line.strip().upper()
                 self.words.add(word)
+
+    def is_word(self, word):
+        """ Returns true or false depending on if a word is in the dictionary """
+        if word in self.words:
+            return True
+
+        return False
 
 
 def rebuild_all(keymap_filename="keymap.pkl", spelldict_filename="en_dict.pkl", words_infile="words.txt"):
