@@ -1,0 +1,3 @@
+colorama==0.4.6
+numpy==1.24.2
+termcolor==2.2.0
